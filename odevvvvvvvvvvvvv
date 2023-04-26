@@ -1,0 +1,73 @@
+import random
+
+import math
+
+def egik_atis(son_iki_hane, hiz_alt_sinir=330, hiz_ust_sinir=1800):
+    g = 10
+    aci = math.radians(30)
+
+    top_konum = (0, son_iki_hane)
+    
+    uzaklik_mesafesi = 20000 + 200 * random.randint(-10, 10)
+    genislik_baslangic = uzaklik_mesafesi
+    genislik_bitis = uzaklik_mesafesi + 1000 + 100 * random.randint(-2, 2)
+
+
+    atis_sayisi = 0
+
+
+    while True:
+        atis_sayisi += 1
+        
+        hiz_ortalama = (hiz_alt_sinir + hiz_ust_sinir) / 2
+        Vx = hiz_ortalama * math.cos(aci)
+        Vy = hiz_ortalama * math.sin(aci)
+        
+        T_uçuş = 2 * Vy / g
+        X_menzil = Vx * T_uçuş
+        
+        if genislik_baslangic <= X_menzil <= genislik_bitis:
+            print(f"{atis_sayisi}. Atış: Hedef vuruldu! Koordinat: ({X_menzil}, {son_iki_hane})")
+            break
+        elif X_menzil < genislik_baslangic:
+            print(f"{atis_sayisi}. Atış: Hedefin önüne düştü")
+            hiz_alt_sinir = hiz_ortalama
+        else:
+            print(f"{atis_sayisi}. Atış: Hedefin arkasına düştü")
+            hiz_ust_sinir = hiz_ortalama
+
+    return atis_sayisi, hiz_ortalama
+
+son_iki_hane = 9
+atislar, vurus_hizi = egik_atis(son_iki_hane)
+print(f"\nTopun {atislar} atış yaparak hedefi vurdu.\nVuruş hızı: {vurus_hizi:.2f} metre/sn")
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_parabola(top_konum, aci, vuruş_hızı, atislar):
+    g = 10
+    x0, y0 = top_konum
+    
+    Vx = vuruş_hızı * math.cos(aci)
+    Vy = vuruş_hızı * math.sin(aci)
+    
+    T_ucus = 2 * Vy / g
+    t = np.linspace(0, T_ucus, 1000)
+
+    x = x0 + Vx * t
+    y = y0 + Vy * t - (1/2) * g * t**2
+    
+    plt.plot(x, y)
+    plt.title(f"Deneme sayısı = {atislar}")
+    plt.xlabel("Mesafe (m)")
+    plt.ylabel("Yükseklik (m)")
+    plt.xlim(0, 25000)
+    plt.show()
+
+
+plot_parabola((0, son_iki_hane), math.radians(30), vurus_hizi, atislar)
+
+#Emirhan Arıkan E.E. Müh. 22040201009
